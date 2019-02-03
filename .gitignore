@@ -93,6 +93,9 @@ typings/
 .dynamodb/
 
 # dist folder
-dist/*
+/dist
+
+# vscode
+/.vscode
 
 # End of https://www.gitignore.io/api/node,database
