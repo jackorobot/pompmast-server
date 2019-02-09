@@ -1,22 +1,22 @@
 import dotenv from "dotenv";
 import express from "express";
+import backend from "./backend";
 
 dotenv.config();
-const port = process.env.SERVER_PORT;
+const port = process.env.SERVER_PORT || 3000;
+const nodeEnv = process.env.NODE_ENV || "development";
 
-const app = express();
+backend.set("port", port);
 
-app.set("port", process.env.SERVER_PORT || 3000);
-
-if (process.env.NODE_ENV === "production") {
-    app.use(express.static("frontend/dist/pompmast-server-frontend"));
+if (nodeEnv === "production") {
+    backend.use(express.static("frontend/dist/pompmast-server-frontend"));
 }
 
-app.get("/", (req: express.Request, res: express.Response) => {
+backend.get("/", (req: express.Request, res: express.Response) => {
     res.send("Hello world!");
 });
 
 // start the express server
-app.listen(app.get("port"), () => {
-    console.log(`server started at http://localhost:${app.get("port")}`);
+backend.listen(backend.get("port"), () => {
+    console.log(`server started at http://localhost:${backend.get("port")}`);
 });
