@@ -1,12 +1,15 @@
 import bodyParser from "body-parser";
 import express from "express";
+import { PompmastRoutes } from "./routes/routes";
 
 class Backend {
     public backend: express.Application;
+    public pompmastRoutes: PompmastRoutes = new PompmastRoutes();
 
     constructor() {
         this.backend = express();
         this.config();
+        this.pompmastRoutes.routes(this.backend);
     }
 
     private config(): void {
