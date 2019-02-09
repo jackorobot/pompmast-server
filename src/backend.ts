@@ -1,6 +1,6 @@
 import bodyParser from "body-parser";
 import express from "express";
-import { PompmastRoutes } from "./routes/routes";
+import { PompmastRoutes } from "./routes/pompmastroutes";
 
 class Backend {
     public backend: express.Application;
