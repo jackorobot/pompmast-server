@@ -1,21 +1,35 @@
 import bodyParser from "body-parser";
 import express from "express";
-import { PompmastRoutes } from "./routes/pompmastroutes";
 
 class Backend {
     public backend: express.Application;
-    public pompmastRoutes: PompmastRoutes = new PompmastRoutes();
+    public port: number;
+    public environment: string;
 
-    constructor() {
+    constructor(controllers: any[], port: number, environment: string) {
         this.backend = express();
-        this.config();
-        this.pompmastRoutes.routes(this.backend);
+        this.port = port;
+
+        this.initializeMiddlewares();
+        this.initializeControllers(controllers);
     }
 
-    private config(): void {
+    public listen() {
+        this.backend.listen(this.port, () => {
+            console.log(`App listening on the port ${this.port}`);
+        });
+    }
+
+    private initializeMiddlewares(): void {
         // Support application/json type post data
         this.backend.use(bodyParser.json());
     }
+
+    private initializeControllers(controllers: any[]) {
+        controllers.forEach((controller) => {
+            this.backend.use("/", controller.router);
+        });
+    }
 }
 
-export default new Backend().backend;
+export default Backend;
