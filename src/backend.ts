@@ -1,22 +1,22 @@
 import bodyParser from "body-parser";
 import express from "express";
+import mongoose from "mongoose";
+import { IController } from "./interfaces/controller";
 
 class Backend {
     public backend: express.Application;
-    public port: number;
-    public environment: string;
 
-    constructor(controllers: any[], port: number, environment: string) {
+    constructor(controllers: any[]) {
         this.backend = express();
-        this.port = port;
 
+        this.connectToTheDatabase();
         this.initializeMiddlewares();
         this.initializeControllers(controllers);
     }
 
     public listen() {
-        this.backend.listen(this.port, () => {
-            console.log(`App listening on the port ${this.port}`);
+        this.backend.listen(process.env.SERVER_PORT, () => {
+            console.log(`App listening on the port ${process.env.SERVER_PORT}`);
         });
     }
 
@@ -25,10 +25,19 @@ class Backend {
         this.backend.use(bodyParser.json());
     }
 
-    private initializeControllers(controllers: any[]) {
+    private initializeControllers(controllers: IController[]) {
         controllers.forEach((controller) => {
             this.backend.use("/", controller.router);
         });
+    }
+
+    private connectToTheDatabase() {
+        const {
+            MONGO_USER,
+            MONGO_PASSWORD,
+            MONGO_PATH,
+        } = process.env;
+        mongoose.connect(`mongodb://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_PATH}`, { useNewUrlParser: true });
     }
 }
 

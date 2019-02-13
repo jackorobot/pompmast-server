@@ -1,8 +1,6 @@
 import { Document, Model, model, Schema } from "mongoose";
 import { ISound } from "../interfaces/sound";
 
-export interface ISoundModel extends ISound, Document { }
-
 export const SoundSchema = new Schema({
     displayname: {
         required: "No displayname given",
@@ -16,4 +14,4 @@ export const SoundSchema = new Schema({
     }
 });
 
-export const Sound: Model<ISoundModel> = model<ISoundModel>("Sound", SoundSchema);
+export const SoundModel: Model<ISound & Document> = model<ISound & Document>("Sound", SoundSchema);

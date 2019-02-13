@@ -1,18 +1,14 @@
-import dotenv from "dotenv";
-import express from "express";
+import "dotenv/config";
 import Backend from "./backend";
 import { SoundController } from "./controllers/sound";
+import validateEnv from "./util/validateEnv";
 
-dotenv.config();
-const port = parseInt(process.env.SERVER_PORT, 10) || 3000;
-const environment = process.env.NODE_ENV || "development";
+validateEnv();
 
 const backend = new Backend(
     [
         new SoundController()
-    ],
-    port,
-    environment
+    ]
 );
 
 backend.listen();

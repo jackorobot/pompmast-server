@@ -1,24 +1,25 @@
 import { NextFunction, Request, Response, Router } from "express";
-import { ISoundModel, Sound } from "../models/sound";
+import { IController } from "../interfaces/controller";
+import { ISound } from "../interfaces/sound";
+import { SoundModel } from "../models/sound";
 
 export const PARAM_SOUND_ID: string = "soundId";
 
-export class SoundController {
-    public rootPath = "/sound";
-    public rootRouter = Router();
-
-    public idPath = this.rootPath + `/:${PARAM_SOUND_ID}`;
+export class SoundController implements IController {
+    public router = Router();
+    private path = "/sound";
+    private idPath = this.path + `/:${PARAM_SOUND_ID}`;
 
     constructor() {
         this.initializeRoutes();
     }
 
     public initializeRoutes() {
-        this.rootRouter.route(this.rootPath)
+        this.router.route(this.path)
             .get(this.getSounds)
-            .post(this.addNewSound);
+            .put(this.addNewSound);
 
-        this.rootRouter.route(this.idPath)
+        this.router.route(this.idPath)
             .all(this.checkSoundIdIsGiven)
             .get(this.getSoundById)
             .put(this.updateSoundById)
@@ -34,53 +35,43 @@ export class SoundController {
     }
 
     private addNewSound(req: Request, res: Response, next: NextFunction): void {
-        const newSound = new Sound(req.body);
+        const newSound = new SoundModel(req.body);
         newSound.save()
-            .then((sound: ISoundModel) => {
+            .then((sound: ISound) => {
                 res.send(sound);
             })
-            .catch((err) => {
-                res.send(err);
-            });
+            .catch(next);
     }
 
     private getSounds(req: Request, res: Response, next: NextFunction): void {
-        Sound.find({})
-            .then((sounds: ISoundModel[]) => {
+        SoundModel.find({})
+            .then((sounds: ISound[]) => {
                 res.send(sounds);
             })
-            .catch((err) => {
-                res.send(err);
-            });
+            .catch(next);
     }
 
     private getSoundById(req: Request, res: Response, next: NextFunction): void {
-        Sound.findById(req.params[PARAM_SOUND_ID])
-            .then((sound: ISoundModel) => {
+        SoundModel.findById(req.params[PARAM_SOUND_ID])
+            .then((sound: ISound) => {
                 res.send(sound);
             })
-            .catch((err) => {
-                res.send(err);
-            });
+            .catch(next);
     }
 
     private updateSoundById(req: Request, res: Response, next: NextFunction): void {
-        Sound.findByIdAndUpdate(req.params[PARAM_SOUND_ID], req.body, { new: true })
-            .then((sound: ISoundModel) => {
+        SoundModel.findByIdAndUpdate(req.params[PARAM_SOUND_ID], req.body, { new: true })
+            .then((sound: ISound) => {
                 res.send(sound);
             })
-            .catch((err) => {
-                res.send(err);
-            });
+            .catch(next);
     }
 
     private deleteSoundById(req: Request, res: Response, next: NextFunction): void {
-        Sound.findByIdAndDelete(req.params[PARAM_SOUND_ID])
-            .then((sound: ISoundModel) => {
+        SoundModel.findByIdAndDelete(req.params[PARAM_SOUND_ID])
+            .then((sound: ISound) => {
                 res.send({ message: "Sound deleted succesfully" });
             })
-            .catch((err) => {
-                res.send(err);
-            });
+            .catch(next);
     }
 }
